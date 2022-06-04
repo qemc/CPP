@@ -8,9 +8,23 @@
 using namespace std;
 using namespace  sf;
 
+
+
+class Rectangle:public RectangleShape {
+public:
+
+	Rectangle(const Vector2f& position, const Vector2f& size) {
+		setPosition(position);
+		setSize(size);
+		setFillColor(Color::Green);
+	}
+
+};
+
+
 int main() {
 
-	RenderWindow window(VideoMode(1478, 739), "sfml");
+	RenderWindow window(VideoMode(700, 700), "sfml");
 
 	window.setFramerateLimit(60);
 
@@ -18,7 +32,7 @@ int main() {
 
 	Image image;
 
-	image.loadFromFile("map.png");
+	image.loadFromFile("map4.png");
 	Texture texture;
 
 	texture.loadFromImage(image);
@@ -37,35 +51,144 @@ int main() {
 	vector<CircleShape> corners;
 
 
+	for (uint16_t j = 0; j < image.getSize().y; j++) {
+		for (uint16_t i = 0; i < image.getSize().x; i++) {
+
+			if (image.getPixel(i, j) == Color::Transparent ) {
+
+				image.setPixel(i, j, Color::White);
+
+
+			}
+
+		}
+	}
+
+
+	vector<Rectangle>rectangles;
 
 	for (uint16_t j = 0; j < image.getSize().y; j++) {
 		for (uint16_t i = 0; i < image.getSize().x; i++) {
 
-			if (image.getPixel(i, j) == Color::Black && image.getPixel(i - 1, j) == Color::White && image.getPixel(i, j - 1) == Color::White) {
+			if (image.getPixel(i, j) == Color::Black && image.getPixel(i - 1, j) != Color::Black && image.getPixel(i, j - 1) != Color::Black) {
 
 				cords_pos.emplace_back(Vector2f(i, j));
-				cout << i << " " << j << endl;
+				
 				uint16_t _i = i;
 				uint16_t _j = j;
 				float i_ = 0;
 				float j_ = 0;
-				while (image.getPixel(_i, j) == Color::Black) {
+				while (image.getPixel(_i, j) == Color::Black && image.getPixel(_i,j-1) !=Color::Black) {
+					
 					i_++;
 					_i++;
 				}
-				while (image.getPixel(i, _j) == Color::Black) {
+				while (image.getPixel(i, _j) == Color::Black && image.getPixel(i-1, _j) != Color::Black) {
 					j_++;
 					_j++;
 				}
-				cout << i_ << " - " << j_ << endl;
+			
+
+				rectangles.emplace_back(Rectangle(Vector2f(i, j), Vector2f(i_, j_)));
+
+			}
+			if (image.getPixel(i, j) == Color::Black && image.getPixel(i + 1, j) != Color::Black && image.getPixel(i, j - 1) != Color::Black) {
+
+				cords_pos.emplace_back(Vector2f(i, j));
+			
+				uint16_t _i = i;
+				uint16_t _j = j;
+				float i_ = 0;
+				float j_ = 0;
+				while (image.getPixel(_i, j) == Color::Black && image.getPixel(_i, j - 1) != Color::Black) {
+				
+					i_--;
+					_i--;
+				}
+				while (image.getPixel(i, _j) == Color::Black && image.getPixel(i + 1, _j) != Color::Black) {
+					j_++;
+					_j++;
+				}
+				
+
+				rectangles.emplace_back(Rectangle(Vector2f(_i, j), Vector2f(abs(i_), j_)));
+
+			}
+
+			if (image.getPixel(i, j) == Color::Black && image.getPixel(i + 1, j) != Color::Black && image.getPixel(i, j + 1) != Color::Black) {
+
+				cords_pos.emplace_back(Vector2f(i, j));
+			
+				int _i = i;
+				int _j = j;
+				float i_ = 0;
+				float j_ = 0;
+				while (image.getPixel(_i, j) == Color::Black && image.getPixel(_i, j + 1) != Color::Black) {
+			
+					i_--;
+					_i--;
+				}
+				while (image.getPixel(i, _j) == Color::Black && image.getPixel(i + 1, _j) != Color::Black) {
+					j_--;
+					_j--;
+				}
+				
+
+				rectangles.emplace_back(Rectangle(Vector2f(_i, _j), Vector2f(abs(i_), abs(j_))));
+
 			}
 
 
 
 
+			//if (image.getPixel(i, j) == Color::Black) {
+
+			//	image.setPixel(i, j, Color::Transparent);
+
+
+			//}
+			//image.setPixel(i, j, Color::Transparent);
 
 		}
 	}
+
+	//for (uint16_t j = 0; j < image.getSize().y; j++) {
+	//	for (uint16_t i = 0; i < image.getSize().x; i++) {
+
+
+	//		if (image.getPixel(i, j) == Color::Black && image.getPixel(i + 1, j) != Color::Black && image.getPixel(i, j + 1) != Color::Black) {
+
+	//			cords_pos.emplace_back(Vector2f(i, j));
+	//			//cout << i << " " << j << endl;
+	//			int _i = i;
+	//			int _j = j;
+	//			float i_ = 0;
+	//			float j_ = 0;
+	//			while (image.getPixel(_i, j) == Color::Black && image.getPixel(_i, j + 1) != Color::Black) {
+	//				//image.setPixel(_i, j, Color::Transparent);
+	//				i_--;
+	//				_i--;
+	//			}
+	//			while (image.getPixel(i, _j) == Color::Black && image.getPixel(i + 1, _j) != Color::Black) {
+	//				j_--;
+	//				_j--;
+	//			}
+	//			//cout << i_ << " - " << j_ << endl;
+
+	//			rectangles.emplace_back(Rectangle(Vector2f(_i, _j), Vector2f(abs(i_), abs(j_))));
+
+	//		}
+
+
+
+
+
+	//	}
+	//}
+
+
+
+
 
 
 	for (int i = 0; i < cords_pos.size(); i++) {
@@ -107,6 +230,11 @@ int main() {
 		}
 
 
+		for (int i = 0; i < rectangles.size(); i++) {
+			window.draw(rectangles[i]);
+
+
+		}
 
 
 		window.display();
