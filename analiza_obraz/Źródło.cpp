@@ -33,7 +33,7 @@ int main() {
 	Image image;
 	
 
-	image.loadFromFile("map4.png");
+	image.loadFromFile("map6.png");
 	Texture texture;
 
 	texture.loadFromImage(image);
@@ -169,7 +169,6 @@ int main() {
 			if (image.getPixel(i, j) == Color::Black && image.getPixel(i + 1, j + 1) != Color::Black && image.getPixel(i, j + 1) == Color::Black && image.getPixel(i + 1, j) == Color::Black) {
 				//cout << "XD" << endl;
 				cords_pos.emplace_back(Vector2f(i, j));
-
 			}
 
 
@@ -184,7 +183,6 @@ int main() {
 			if (image.getPixel(i, j) == Color::Black && image.getPixel(i - 1, j + 1) != Color::Black && image.getPixel(i, j + 1) == Color::Black && image.getPixel(i - 1, j) == Color::Black) {
 				//cout << "XD" << endl;
 				cords_pos.emplace_back(Vector2f(i, j));
-
 			}
 
 
@@ -197,7 +195,77 @@ int main() {
 
 	for(int i = 0; i < cords_pos.size(); i++) {
 		cout << cords_pos[i].x << " " << cords_pos[i].y << endl;
+
+		for (int j = 0; j < cords_pos.size(); j++) {
+
+			if (cords_pos[i].y == cords_pos[j].y) {
+
+				for (int x = 0; x < cords_pos.size(); x++) {
+
+					if (cords_pos[j].x == cords_pos[x].x ) {
+
+						for (int o = 0; o < cords_pos.size(); o++) {
+
+							if (cords_pos[x].y == cords_pos[o].y && cords_pos[i].x == cords_pos[o].x) {
+
+								cout << "prost" << endl;
+
+								rectangles.emplace_back(Rectangle(Vector2f(cords_pos[i]), Vector2f(cords_pos[j].x - cords_pos[i].x, cords_pos[o].y - cords_pos[i].y)));
+								break;
+
+							}
+
+						}
+
+					}
+				}
+
+
+			}
+
+
+
+		}
+
+
 	}
+
+
+	//for (int i = 0; i < cords_pos.size(); i++) {
+	//	cout << cords_pos[i].x << " " << cords_pos[i].y << endl;
+
+	//	for (int j = 0; j < cords_pos.size(); j++) {
+
+	//		if (cords_pos[i].y == cords_pos[j].y && i != j) {
+
+	//			for (int x = 0; x < cords_pos.size(); x++) {
+
+	//				if (cords_pos[j].x == cords_pos[x].x && j != x) {
+
+	//					for (int o = 0; o < cords_pos.size(); o++) {
+
+	//						if (cords_pos[x].y == cords_pos[o].y && cords_pos[i].x == cords_pos[o].x) {
+
+	//							cout << "prost" << endl;
+
+	//							rectangles.emplace_back(Rectangle(Vector2f(cords_pos[i]), Vector2f(cords_pos[j].x - cords_pos[i].x, cords_pos[o].y - cords_pos[i].y)));
+
+
+	//						}
+	//					}
+
+	//				}
+	//			}
+
+
+	//		}
+
+
+
+	//	}
+
+
+	//}
 
 
 	//for (int s = 0; s < cords_pos.size(); s++) {
