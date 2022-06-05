@@ -316,18 +316,6 @@ int main() {
 	vector<Soldier> soldiers;
 
 
-	//for (uint16_t j = 0; j < 700; j++) {
-	//	for (uint16_t i = 0; i < 700; i++) {
-
-	//		if (image.getPixel(i, j) == red) {
-
-	//			image.setPixel(i, j, Color::White);
-
-
-	//		}
-
-	//	}
-	//}
 
 	for (uint16_t j = 1; j < 700; j++) {
 		for (uint16_t i = 1; i < 700; i++) {
