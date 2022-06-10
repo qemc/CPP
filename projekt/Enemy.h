@@ -5,22 +5,31 @@
 
 class Enemy:public Soldiers
 {
-public:
-	Enemy();
 
-	void control(Player player);
+
+private:
+	Vector2f range_a;
 	Vector2f velocity;
-
-	
-	vector<Bullets> bullets;
-	void draw(RenderTarget& target, RenderStates state)const override;
-
-	Vector2f dirVec;
-
-	Clock e_clock_s;
-
 	Vector2f player_pos;
 	Vector2f current_pos;
 	Vector2f shootDir;
+	Vector2f dirVec;
+
+	RectangleShape range;
+
+	Clock e_clock_s;
+
+	vector<Bullets> bullets;
+
+	bool vert;
+
+public:
+
+
+	Enemy(const Vector2f& range_, const Vector2f& position, bool vert_, const Vector2f& range_size, const Vector2f& range_pos);
+
+	void control(Player player);
+	void draw(RenderTarget& target, RenderStates state)const override;
+	void move_();
 };
 

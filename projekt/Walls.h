@@ -9,13 +9,18 @@
 
 class Walls : public RectangleShape
 {
-public:
-
-	Walls(const Vector2f& position, bool rotate);
-	void collision(Player &player);
-	void bullet_collision(Player &player);
+private:
 
 	FloatRect playerBounds;
 	FloatRect rectangleBounds;
+
+public:
+
+	Walls(const Vector2f& position, const Vector2f& size);
+
+	void collision(Player &player);
+	void bullet_collision(Player &player);
+
+
 };
 

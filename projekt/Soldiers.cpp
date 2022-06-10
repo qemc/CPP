@@ -10,8 +10,6 @@ Vector2f Soldiers::norm(const Vector2f& x, const Vector2f& y) {
 	Vector2f all(abs(x.x - y.x), abs(x.y - y.y));
 	float sqr = sqrt(((y.x - x.x) * (y.x - x.x)) + (y.y - x.y) * (y.y - x.y));
 	return Vector2f(all.x / sqr, all.y / sqr);
-
-
 }
 
 
@@ -36,10 +34,6 @@ void Soldiers::get_dir_vec(const Vector2f& mousepos) {
 	 Vector2f dirVec_(mousepos.x - main.getPosition().x, mousepos.y - main.getPosition().y);
 	 dirVec = dirVec_;
 
-	 
-	 
-
-
 	 if (Mouse::isButtonPressed(Mouse::Left)) {
 		 Vector2f mousepos_(mouse_pos);
 		 mouse_pos = mousepos_;
@@ -47,28 +41,19 @@ void Soldiers::get_dir_vec(const Vector2f& mousepos) {
 
 	 Vector2f currnentpos_ = main.getPosition();
 	 current_pos = currnentpos_;
-
-	 //cout << current_pos.x << current_pos.y << endl;
-	 //cout << mouse_pos.x << mouse_pos.y << endl;
-
-
 }
 
 void Soldiers::set_circles() {
 
-
-
-	//MAIN CIRCLE
 	main.setFillColor(Color::Transparent);
 	main.setRadius(10);
 	main.setOutlineThickness(2);
 	main.setOutlineColor(Color::White);
 	main.setOrigin(10, 10);
-	//AIM CIRCLE
 	aim.setFillColor(Color::Green);
 	aim.setRadius(4);
 	aim.setOrigin(2, 20);
-	range.setOrigin(200, 200);
+
 
 }
 
@@ -78,7 +63,6 @@ void Soldiers::set_circles() {
 
 void Soldiers::update() {
 
-
 	set_circles();
 
 	if (dirVec.y < 0) {
@@ -87,28 +71,11 @@ void Soldiers::update() {
 	else {
 		aim.setRotation(90 + angle(dirVec));
 	}
-
-
-
-
-
-
-
-
-
 }
 
 
 void Soldiers::draw(RenderTarget& target, RenderStates state) const {
 	target.draw(main, state);
 	target.draw(aim,state);
-	target.draw(range, state);
-
-	//for (int i = 0; i < bullets_.size(); i++) {
-
-	//	target.draw(bullets_[i]);
-	//}
-
-
 }
 

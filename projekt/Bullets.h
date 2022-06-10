@@ -11,13 +11,15 @@ using namespace sf;
 
 class Bullets:public CircleShape
 {
-public:
-
-	Bullets(const Vector2f &position, const Vector2f& velocity_,const Vector2f& m_pos);
-	Vector2f velocity;
+private:
+	
 	Vector2f player_shoot_pos;
 	int bullets_hp = 2;
-	
-	//friend void is_attack(Soldiers player, vector<Bullets>bullets);
+
+public:
+
+	Vector2f velocity;
+
+	Bullets(const Vector2f &position, const Vector2f& velocity_,const Vector2f& m_pos);	
 };
 
