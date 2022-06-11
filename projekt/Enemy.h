@@ -19,17 +19,19 @@ private:
 
 	Clock e_clock_s;
 
-	vector<Bullets> bullets;
+	
 
 	bool vert;
 
 public:
 
-
+	vector<Bullets> bullets;
+	
 	Enemy(const Vector2f& range_, const Vector2f& position, bool vert_, const Vector2f& range_size, const Vector2f& range_pos);
 
 	void control(Player player);
 	void draw(RenderTarget& target, RenderStates state)const override;
 	void move_();
+	
 };
 

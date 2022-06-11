@@ -4,9 +4,17 @@
 #include "Game.h"
 #include "Bullets.h"
 #include "Walls.h"
+#include "Bonus.h"
+#include "Fireplace.h"
 
 using namespace std;
 using namespace sf;
+
+
+
+
+
+
 
 
 Vector2f Player::m_pos;
@@ -18,21 +26,43 @@ int main() {
 	
 	ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	RenderWindow window(VideoMode(700, 700), "Steal the tank!", Style::Default, settings);
+	RenderWindow window(VideoMode(1000, 700), "Steal the tank!", Style::Default, settings);
 	Event event;
 	window.setFramerateLimit(60);
 
 	Player player;
+	Game game;
+
+
+
+
+
 
 	Image image;
-	image.loadFromFile("map9.png");
+	image.loadFromFile("map13.png");
 
-	Color red(233, 30, 99);
+	Color red(237, 28, 36);
+	Color yellow(255, 242, 0);
+	Color grey(112, 146, 190);
+
+
 	
 	Vector2f cords_set_pos;
 	Vector2f current_pos;
 
 
+	Texture fire_texture;
+	fire_texture.loadFromFile("fireplace.png");
+	
+	IntRect sourceSprite(0, 0, 64, 128);
+	int choose_sprite_x = 64;
+	int choose_sprite_y = 128;
+
+	Sprite sprite;
+	sprite.setTexture(fire_texture);
+
+
+	Clock fireplace_clock;
 	Clock shoot_clock;
 	
 
@@ -81,7 +111,6 @@ int main() {
 		}
 	}
 
-
 	for (uint16_t j = 0; j < 699; j++) {
 		for (uint16_t i = 1; i < 700; i++) {
 
@@ -104,8 +133,6 @@ int main() {
 		}
 	}
 
-
-
 	for (uint16_t j = 1; j < 699; j++) {
 		for (uint16_t i = 1; i < 699; i++) {
 
@@ -117,7 +144,6 @@ int main() {
 		}
 	}
 
-
 	for (uint16_t j = 1; j < 699; j++) {
 		for (uint16_t i = 1; i < 699; i++) {
 
@@ -128,7 +154,6 @@ int main() {
 		}
 	}
 
-
 	for (uint16_t j = 1; j < 699; j++) {
 		for (uint16_t i = 1; i < 699; i++) {
 
@@ -138,9 +163,6 @@ int main() {
 			}
 		}
 	}
-
-
-	
 
 	for (int i = 0; i < cords_pos.size(); i++) {
 
@@ -199,6 +221,40 @@ int main() {
 		}
 	}
 
+	//reading bonuses form image
+
+	vector<unique_ptr<Bonus>> bonus;
+	vector<Fireplace>fire;
+
+
+
+	for (uint16_t j = 1; j < 700; j++) {
+
+		for (uint16_t i = 1; i < 700; i++) {
+
+			if (image.getPixel(i, j) == yellow && (image.getPixel(i, j - 1) != yellow || j - 1 == 0) && (image.getPixel(i - 1, j) != yellow || i - 1 == 0)) {
+
+				ecord_pos.emplace_back(Vector2f(i, j));
+
+				int i_ = i;
+				int j_ = j;
+
+
+				while (image.getPixel(i_, j) == yellow && image.getPixel(i_, j - 1) != yellow) {
+					i_++;
+				}
+				while (image.getPixel(i, j_) == yellow && image.getPixel(i - 1, j_) != yellow) {
+					j_++;
+				}
+
+				bonus.emplace_back(make_unique<Fireplace>(Fireplace(fire_texture, Vector2f(i_ - 32, j_-50), sourceSprite)));
+				cout << i_ << " " << j_ << endl;
+			
+			}
+		}
+	}
+
+
 	
 	//setting player circles
 	player.set_circles();
@@ -217,15 +273,34 @@ int main() {
 	
 
 		//enemy
-		for (auto& s : soldiers) {
+		for (auto& s :soldiers) {
 			s.get_dir_vec(player.main.getPosition());
 			s.update();
 			s.control(player);
 			s.move_();
 			window.draw(s);
+			game.shoot(player, s);
+
+
+
+
 		}
 
+		//deleting deal enemy
+		for (auto s = soldiers.begin(); s != soldiers.end();) {
+
+
+			if (s->hp <= 0) {
+				s = soldiers.erase(s);
+			}
+			else {
+				++s;
+			}
+
+		}
 		
+		
+
 		
 		//player functions
 		player.update();
@@ -250,6 +325,54 @@ int main() {
 			window.draw(s);
 			s.bullet_collision(player);
 		}		
+		
+		for (auto& s : bonus) {
+
+			Bonus& some_bonus = dynamic_cast<Bonus&>(*s.get());
+
+			if (some_bonus.getScale().x == 0.5) {
+
+				if (fireplace_clock.getElapsedTime().asSeconds() > 0.10) {
+
+					Fireplace& some_fireplace = dynamic_cast<Fireplace&>(*s.get());
+
+					sourceSprite.left = choose_sprite_x;
+
+					choose_sprite_x += 64;
+					choose_sprite_y += 64;
+
+					for (const auto& g : bonus) {
+						g->setTextureRect(sourceSprite);
+					}
+
+
+					if (choose_sprite_x == 512) {
+						choose_sprite_y += 64;
+						choose_sprite_x = 64;
+
+					}
+					if (choose_sprite_y == 512) {
+						choose_sprite_y = 64;
+						choose_sprite_x = 64;
+
+					}
+					some_fireplace.add_hp(player);
+					fireplace_clock.restart();
+					
+				}
+			}
+			if (some_bonus.getScale().x == 0.5) {
+
+				Fireplace& some_fireplace = dynamic_cast<Fireplace&>(*s.get());
+				some_fireplace.add_hp(player);
+
+			}
+			
+			
+			window.draw(*s);
+		}
+
+
 		
 	
 		window.display();

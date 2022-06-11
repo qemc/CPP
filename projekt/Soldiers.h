@@ -3,6 +3,9 @@
 //CPP
 #include <iostream>
 #include "Bullets.h"
+#include <vector>
+#include <memory>
+#include <math.h>
 //SFML
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -26,6 +29,8 @@ protected:
 	Vector2f dirVec;
 
 public:
+
+	int hp = 5;
 
 	Soldiers() = default;
 	virtual ~Soldiers() = default;

@@ -10,10 +10,12 @@
 class Game
 {
 public:
-	void update(Player player, Enemy enemy);
+	Game game();
+	bool start = false;
 
 
-	void bullet_player_collision(Walls &wall);
+
+	void shoot(Player &player, Enemy &enemy);
 
 
 	bool atack;
