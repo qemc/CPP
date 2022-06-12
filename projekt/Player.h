@@ -19,6 +19,8 @@ public:
 
 	Vector2f velocity;
 	vector<Bullets> bullets_;
+	
+	int ammo = 50;
 
 	static Vector2f m_pos;
 

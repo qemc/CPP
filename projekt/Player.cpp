@@ -51,7 +51,7 @@ void Player::get_dir_vec_player(const Vector2f& mousepos) {
 	Vector2f currnentpos_ = main.getPosition();
 	current_pos = currnentpos_;
 
-		if (Mouse::isButtonPressed(Mouse::Left)&&p_clock_s.getElapsedTime().asSeconds() > 0.25) {
+		if (Mouse::isButtonPressed(Mouse::Left)&&p_clock_s.getElapsedTime().asSeconds() > 0.25 && ammo > 0) {
 
 			mouse_pos = m_pos;
 			m_pos2 = main.getPosition();
@@ -81,6 +81,7 @@ void Player::get_dir_vec_player(const Vector2f& mousepos) {
 			
 			bullets_.emplace_back(Bullets(aim.getPosition(), shootDir, m_pos2));
 			p_clock_s.restart();
+			ammo--;
 
 		}
 

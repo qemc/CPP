@@ -19,6 +19,7 @@ private:
 
 	Clock e_clock_s;
 
+
 	
 
 	bool vert;

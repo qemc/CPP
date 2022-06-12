@@ -1,6 +1,14 @@
 
 #include "Game.h"
+#include "Fireplace.h"
 
+
+Game::Game(const Texture& texture) {
+
+	setTexture(texture);
+	setScale(0.5, 0.5);
+
+}
 
 
 
@@ -48,6 +56,16 @@ void Game::shoot(Player& player, Enemy& enemy) {
 			++s;
 		}
 	}
+
+
+
+	if (player.main.getGlobalBounds().intersects(this->getGlobalBounds())) {
+		cout << "WYGRALES" << endl;
+
+	}
+
+
+	
 
 
 

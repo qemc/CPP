@@ -7,22 +7,12 @@
 #include "Walls.h"
 
 
-class Game
+class Game :public Sprite
 {
 public:
-	Game game();
+	Game(const Texture &testure);
 	bool start = false;
-
-
-
 	void shoot(Player &player, Enemy &enemy);
-
-
-	bool atack;
-
-	
-
-
 
 };
 

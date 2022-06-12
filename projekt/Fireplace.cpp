@@ -24,6 +24,8 @@ void Fireplace::add_hp(Player& player) {
 		player.hp++;
 		cout << player.hp << endl;
 		hp_clock.restart();
+
+
 	}
 
 

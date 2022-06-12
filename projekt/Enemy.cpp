@@ -21,6 +21,8 @@ Enemy::Enemy(const Vector2f& range_, const Vector2f& position, bool vert_ ,const
 	range.setPosition(range_pos);
 	range.setFillColor(Color::Transparent);
 
+
+
 	
 
 }
@@ -71,6 +73,7 @@ void Enemy::control(Player player) {
 			bullets.erase(bullets.begin() + i);
 		}
 	}
+
 
 
 }

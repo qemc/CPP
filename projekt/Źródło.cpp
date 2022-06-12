@@ -6,253 +6,108 @@
 #include "Walls.h"
 #include "Bonus.h"
 #include "Fireplace.h"
+#include "Ammo.h"
+#include "Stats.h"
+#include "Start.h"
+#include <string>
 
+#include "map_reader.h"
 using namespace std;
 using namespace sf;
-
-
-
-
-
-
-
 
 Vector2f Player::m_pos;
 
 
 int main() {
 
+	Stats stats;
 
 	
 	ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	RenderWindow window(VideoMode(1000, 700), "Steal the tank!", Style::Default, settings);
+	RenderWindow window(VideoMode(700, 800), "Steal the tank!", Style::Default, settings);
 	Event event;
 	window.setFramerateLimit(60);
 
 	Player player;
-	Game game;
+	Texture background_t;
+	background_t.loadFromFile("background.png");
+	Sprite background;
+	background.setTexture(background_t);
 
+
+
+
+	vector<Texture>textures;
+
+	for (int i = 0; i < 3; i++) {
+
+		Texture texture;
+		texture.loadFromFile(to_string(i+1) + "map.png");
+		textures.emplace_back(texture);
+
+
+
+	}
+	Start start_m(textures);
 
 
 
 
 
 	Image image;
-	image.loadFromFile("map13.png");
+	//image.loadFromFile("map1.png");
+
+	vector<string>maps = { "map1.png","map2.png","map3.png"};
+
 
 	Color red(237, 28, 36);
 	Color yellow(255, 242, 0);
 	Color grey(112, 146, 190);
+	Color blue(0, 162, 232);
 
-
-	
 	Vector2f cords_set_pos;
 	Vector2f current_pos;
+	
+	// tank texture upload
 
+	Texture tank_texture;
+	tank_texture.loadFromFile("tank.png");
 
+	Game game(tank_texture);
+
+	Sprite sprite;
+	sprite.setTexture(tank_texture);
+	
+	//ammo texture upload
+	Texture ammo_texture;
+	ammo_texture.loadFromFile("ammo.png");
+	
+	//fireplace texture upload
 	Texture fire_texture;
 	fire_texture.loadFromFile("fireplace.png");
-	
+
+	//fireplace animation variables
 	IntRect sourceSprite(0, 0, 64, 128);
 	int choose_sprite_x = 64;
 	int choose_sprite_y = 128;
-
-	Sprite sprite;
-	sprite.setTexture(fire_texture);
-
-
+	//clocks
 	Clock fireplace_clock;
 	Clock shoot_clock;
-	
-
-
+	//reading map variables
 	vector<Vector2f>cords_pos;
 	vector<CircleShape> corners;
 	vector<Walls>rectangles;
 	vector<Vector2f> ecord_pos;
 	vector<Enemy> soldiers;
-
-	//reading walls form image
-	
-
-	for (uint16_t j = 1; j < 700; j++) {
-		for (uint16_t i = 1; i < 700; i++) {
-
-			if (image.getPixel(i, j) == Color::Black && (image.getPixel(i, j - 1) != Color::Black || j - 1 == 0) && (image.getPixel(i - 1, j) != Color::Black || i - 1 == 0)) {
-				
-				cords_pos.emplace_back(Vector2f(i, j));
-
-			}
-		}
-	}
-
-
-
-	for (uint16_t j = 0; j < 699; j++) {
-		for (uint16_t i = 0; i < 699; i++) {
-
-			if (image.getPixel(i, j) == Color::Black && (image.getPixel(i, j + 1) != Color::Black || j + 1 == 699) && (image.getPixel(i + 1, j) != Color::Black || i + 1 == 699)) {
-
-				cords_pos.emplace_back(Vector2f(i, j));
-
-			}
-		}
-	}
-
-	for (uint16_t j = 1; j < 700; j++) {
-		for (uint16_t i = 0; i < 699; i++) {
-
-			if (image.getPixel(i, j) == Color::Black && (image.getPixel(i, j - 1) != Color::Black || j - 1 == 0) && (image.getPixel(i + 1, j) != Color::Black || i + 1 == 699)) {
-			
-				cords_pos.emplace_back(Vector2f(i, j));
-
-			}
-		}
-	}
-
-	for (uint16_t j = 0; j < 699; j++) {
-		for (uint16_t i = 1; i < 700; i++) {
-
-			if (image.getPixel(i, j) == Color::Black && (image.getPixel(i, j + 1) != Color::Black || j + 1 == 699) && (image.getPixel(i - 1, j) != Color::Black || i - 1 == 0)) {
-				
-				cords_pos.emplace_back(Vector2f(i, j));
-
-			}
-		}
-	}
-
-	for (uint16_t j = 1; j < 699; j++) {
-		for (uint16_t i = 1; i < 699; i++) {
-
-			if (image.getPixel(i, j) == Color::Black && image.getPixel(i + 1, j - 1) != Color::Black && image.getPixel(i, j - 1) == Color::Black && image.getPixel(i + 1, j) == Color::Black) {
-				
-				cords_pos.emplace_back(Vector2f(i, j));
-
-			}
-		}
-	}
-
-	for (uint16_t j = 1; j < 699; j++) {
-		for (uint16_t i = 1; i < 699; i++) {
-
-			if (image.getPixel(i, j) == Color::Black && image.getPixel(i - 1, j - 1) != Color::Black && image.getPixel(i, j - 1) == Color::Black && image.getPixel(i - 1, j) == Color::Black) {
-				
-				cords_pos.emplace_back(Vector2f(i, j));
-
-			}
-		}
-	}
-
-	for (uint16_t j = 1; j < 699; j++) {
-		for (uint16_t i = 1; i < 699; i++) {
-
-			if (image.getPixel(i, j) == Color::Black && image.getPixel(i + 1, j + 1) != Color::Black && image.getPixel(i, j + 1) == Color::Black && image.getPixel(i + 1, j) == Color::Black) {
-				
-				cords_pos.emplace_back(Vector2f(i, j));
-			}
-		}
-	}
-
-	for (uint16_t j = 1; j < 699; j++) {
-		for (uint16_t i = 1; i < 699; i++) {
-
-			if (image.getPixel(i, j) == Color::Black && image.getPixel(i - 1, j + 1) != Color::Black && image.getPixel(i, j + 1) == Color::Black && image.getPixel(i - 1, j) == Color::Black) {
-				
-				cords_pos.emplace_back(Vector2f(i, j));
-			}
-		}
-	}
-
-	for (int i = 0; i < cords_pos.size(); i++) {
-
-		for (int j = 0; j < cords_pos.size(); j++) {
-
-			if (cords_pos[i].y == cords_pos[j].y && i!=j) {
-
-				for (int x = 0; x < cords_pos.size(); x++) {
-
-					if (cords_pos[j].x == cords_pos[x].x && j!=x) {
-
-						for (int o = 0; o < cords_pos.size(); o++) {
-
-							if (cords_pos[x].y == cords_pos[o].y && cords_pos[i].x == cords_pos[o].x && o !=x) {
-
-								rectangles.emplace_back(Walls(Vector2f(cords_pos[i]), Vector2f(cords_pos[j].x - cords_pos[i].x, cords_pos[o].y - cords_pos[i].y)));
-								break;
-
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-
-	//reading enemies form image
-
-	for (uint16_t j = 1; j < 700; j++) {
-
-		for (uint16_t i = 1; i < 700; i++) {
-
-			if (image.getPixel(i, j) == red && (image.getPixel(i, j - 1) != red || j - 1 == 0) && (image.getPixel(i - 1, j) != red || i - 1 == 0)) {
-
-				ecord_pos.emplace_back(Vector2f(i, j));
-
-				int i_ = i;
-				int j_ = j;
-
-
-				while (image.getPixel(i_, j) == red && image.getPixel(i_, j - 1) != red) {
-					i_++;
-				}
-				while (image.getPixel(i, j_) == red && image.getPixel(i - 1, j_) != red) {
-					j_++;
-				}
-
-				if (i_ - i > j_ - j) {
-					soldiers.emplace_back(Vector2f(i, i_), Vector2f(i_, j - (j - j_) / 2), false, Vector2f((i_ - i),(j_-j)), Vector2f(i, j));
-				}
-				else {
-					soldiers.emplace_back(Vector2f(j, j_), Vector2f(i - (i - i_) / 2, j), true, Vector2f((i_ -i) ,(j_ - j)),Vector2f(i,j));
-				}
-			}
-		}
-	}
-
-	//reading bonuses form image
-
 	vector<unique_ptr<Bonus>> bonus;
 	vector<Fireplace>fire;
 
 
 
-	for (uint16_t j = 1; j < 700; j++) {
 
-		for (uint16_t i = 1; i < 700; i++) {
+	
 
-			if (image.getPixel(i, j) == yellow && (image.getPixel(i, j - 1) != yellow || j - 1 == 0) && (image.getPixel(i - 1, j) != yellow || i - 1 == 0)) {
-
-				ecord_pos.emplace_back(Vector2f(i, j));
-
-				int i_ = i;
-				int j_ = j;
-
-
-				while (image.getPixel(i_, j) == yellow && image.getPixel(i_, j - 1) != yellow) {
-					i_++;
-				}
-				while (image.getPixel(i, j_) == yellow && image.getPixel(i - 1, j_) != yellow) {
-					j_++;
-				}
-
-				bonus.emplace_back(make_unique<Fireplace>(Fireplace(fire_texture, Vector2f(i_ - 32, j_-50), sourceSprite)));
-				cout << i_ << " " << j_ << endl;
-			
-			}
-		}
-	}
 
 
 	
@@ -260,122 +115,189 @@ int main() {
 	player.set_circles();
 
 
+
+	bool start = false;
+	bool menu = true;
+	
+
+
+	
+
+	//main loop
 	while (window.isOpen()) {
+
+
 		while (window.pollEvent(event)) {
 			if (event.type == Event::Closed) {
 				window.close();
 				break;
 			}
 		}
-
-		window.clear();
-
-	
-
-		//enemy
-		for (auto& s :soldiers) {
-			s.get_dir_vec(player.main.getPosition());
-			s.update();
-			s.control(player);
-			s.move_();
-			window.draw(s);
-			game.shoot(player, s);
+		//starting loop
 
 
+		while (menu == true) {
 
-
-		}
-
-		//deleting deal enemy
-		for (auto s = soldiers.begin(); s != soldiers.end();) {
-
-
-			if (s->hp <= 0) {
-				s = soldiers.erase(s);
-			}
-			else {
-				++s;
-			}
-
-		}
-		
-		
-
-		
-		//player functions
-		player.update();
-		player.get_dir_vec_player(window.mapPixelToCoords(Mouse::getPosition(window)));
-		player.m_pos = window.mapPixelToCoords(Mouse::getPosition(window));
-		player.control();
-		window.draw(player);
-		
-		
-		
-		
-		//walls functions
-
-		for (auto& s : rectangles) {
-
-			if (player.main.getGlobalBounds().intersects(s.getGlobalBounds())) {
-
-				s.collision(player);
-
-
-			}
-			window.draw(s);
-			s.bullet_collision(player);
-		}		
-		
-		for (auto& s : bonus) {
-
-			Bonus& some_bonus = dynamic_cast<Bonus&>(*s.get());
-
-			if (some_bonus.getScale().x == 0.5) {
-
-				if (fireplace_clock.getElapsedTime().asSeconds() > 0.10) {
-
-					Fireplace& some_fireplace = dynamic_cast<Fireplace&>(*s.get());
-
-					sourceSprite.left = choose_sprite_x;
-
-					choose_sprite_x += 64;
-					choose_sprite_y += 64;
-
-					for (const auto& g : bonus) {
-						g->setTextureRect(sourceSprite);
-					}
-
-
-					if (choose_sprite_x == 512) {
-						choose_sprite_y += 64;
-						choose_sprite_x = 64;
-
-					}
-					if (choose_sprite_y == 512) {
-						choose_sprite_y = 64;
-						choose_sprite_x = 64;
-
-					}
-					some_fireplace.add_hp(player);
-					fireplace_clock.restart();
-					
+			while (window.pollEvent(event)) {
+				if (event.type == Event::Closed) {
+					window.close();
+					break;
 				}
 			}
-			if (some_bonus.getScale().x == 0.5) {
-
-				Fireplace& some_fireplace = dynamic_cast<Fireplace&>(*s.get());
-				some_fireplace.add_hp(player);
-
-			}
-			
-			
-			window.draw(*s);
-		}
-
+				
+			start_m.update(window.mapPixelToCoords(Mouse::getPosition(window)));
 
 		
-	
-		window.display();
+
+
+			for (int i = 0; i < 3; i++) {
+
+
+				if (Mouse::isButtonPressed(Mouse::Left)&&start_m.maps[i].getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
+
+					image.loadFromFile("map"+to_string(i+1)+".png");
+
+					rectangles = read_walls(image);
+					soldiers = read_enemies(image);
+					bonus = read_bonus(image, fire_texture, ammo_texture);
+					game.setPosition(set_destination(image));
+					start = true;
+					menu = false;
+					stats.game_clock.restart();
+				}
+
+			}
+
+			window.clear();
+		
+			window.draw(background);
+			window.draw(start_m);
+
+
+			window.display();
+
+		}
+		// game loop
+		while (start == true) {
+
+			while (window.pollEvent(event)) {
+				if (event.type == Event::Closed) {
+					window.close();
+					break;
+				}
+			}
+			window.clear();
+			window.draw(background);
+			//enemy
+			for (auto& s : soldiers) {
+				s.get_dir_vec(player.main.getPosition());
+				s.update();
+				s.control(player);
+				s.move_();
+				window.draw(s);
+				game.shoot(player, s);
+
+			}
+
+
+
+			//deleting deal enemy
+			for (auto s = soldiers.begin(); s != soldiers.end();) {
+
+
+				if (s->hp <= 0) {
+					s = soldiers.erase(s);
+				}
+				else {
+					++s;
+				}
+
+			}
+
+			//player functions
+			player.update();
+			player.get_dir_vec_player(window.mapPixelToCoords(Mouse::getPosition(window)));
+			player.m_pos = window.mapPixelToCoords(Mouse::getPosition(window));
+			player.control();
+			window.draw(player);
+
+			//walls functions
+
+			for (auto& s : rectangles) {
+
+				if (player.main.getGlobalBounds().intersects(s.getGlobalBounds())) {
+
+					s.collision(player);
+				}
+				window.draw(s);
+				s.bullet_collision(player);
+			}
+
+			//bonus funcitons and drawing
+			for (auto& s : bonus) {
+
+				if (s->is_ammo == false) {
+
+					if (fireplace_clock.getElapsedTime().asSeconds() > 0.10) {
+
+						Fireplace& some_fireplace = dynamic_cast<Fireplace&>(*s.get());
+
+						sourceSprite.left = choose_sprite_x;
+						choose_sprite_x += 64;
+						choose_sprite_y += 64;
+
+						for (const auto& g : bonus) {
+							if (g->is_ammo == false) {
+
+								g->setTextureRect(sourceSprite);
+							}
+						}
+						if (choose_sprite_x == 512) {
+							choose_sprite_y += 64;
+							choose_sprite_x = 64;
+
+						}
+						if (choose_sprite_y == 512) {
+							choose_sprite_y = 64;
+							choose_sprite_x = 64;
+
+						}
+						some_fireplace.add_hp(player);
+						fireplace_clock.restart();
+					}
+				}
+
+				if (s->is_ammo == false) {
+
+					Fireplace& some_fireplace = dynamic_cast<Fireplace&>(*s.get());
+					some_fireplace.add_hp(player);
+				}
+				else {
+					Ammo& some_ammo = dynamic_cast<Ammo&>(*s.get());
+					some_ammo.add_ammo(player);
+				}
+				window.draw(*s);
+			}
+
+			//deleting 
+			for (auto itr = bonus.begin(); itr != bonus.end();) {
+				Bonus& some_bonus = dynamic_cast<Bonus&>(*itr->get());
+				if (some_bonus.is_ammo == true && some_bonus.getGlobalBounds().intersects(player.main.getGlobalBounds())) {
+
+					itr = bonus.erase(itr);
+				}
+				else {
+					++itr;
+				}
+			}
+			stats.update(player);
+			window.draw(stats);
+			window.draw(game);
+
+			window.display();
+
+
+		}
 	}
 
 
