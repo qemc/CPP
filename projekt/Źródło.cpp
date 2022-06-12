@@ -16,6 +16,7 @@ using namespace std;
 using namespace sf;
 
 Vector2f Player::m_pos;
+Clock Soldiers::movement;
 
 
 int main() {
@@ -45,8 +46,6 @@ int main() {
 		Texture texture;
 		texture.loadFromFile(to_string(i+1) + "map.png");
 		textures.emplace_back(texture);
-
-
 
 	}
 	Start start_m(textures);
@@ -295,6 +294,8 @@ int main() {
 			window.draw(game);
 
 			window.display();
+
+			Soldiers::movement.restart();
 
 
 		}

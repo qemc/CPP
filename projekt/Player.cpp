@@ -31,7 +31,28 @@ void Player::control() {
 		velocity.x = 0;
 		velocity.y = 0;
 	}
-	main.move(velocity);
+	
+
+	if (Keyboard::isKeyPressed(Keyboard::Key::W) && Keyboard::isKeyPressed(Keyboard::Key::LShift)) {
+		velocity.x = 0;
+		velocity.y = -10;
+
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key::S) && Keyboard::isKeyPressed(Keyboard::Key::LShift)) {
+		velocity.x = 0;
+		velocity.y = 10;
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key::A) && Keyboard::isKeyPressed(Keyboard::Key::LShift)) {
+		velocity.x = -10;
+		velocity.y = 0;
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key::D) && Keyboard::isKeyPressed(Keyboard::Key::LShift)) {
+		velocity.x = 10;
+		velocity.y = 0;
+	}
+
+
+	main.move(velocity.x /** movement.getElapsedTime().asSeconds() * 100*/, velocity.y /** movement.getElapsedTime().asSeconds() * 100*/);
 
 }
 
@@ -58,23 +79,23 @@ void Player::get_dir_vec_player(const Vector2f& mousepos) {
 
 			
 			if (mouse_pos.x < current_pos.x && mouse_pos.y < current_pos.y) {
-				shootDir.x = -5  * norm(mouse_pos, current_pos).x;
-				shootDir.y = -5  * norm(mouse_pos, current_pos).y;
+				shootDir.x = -8  * norm(mouse_pos, current_pos).x;
+				shootDir.y = -8  * norm(mouse_pos, current_pos).y;
 			}
 			else
 			if (mouse_pos.x > current_pos.x && mouse_pos.y < current_pos.y) {
-				shootDir.x = 5  * norm(mouse_pos, current_pos).x;
-				shootDir.y = -5 * norm(mouse_pos, current_pos).y;
+				shootDir.x = 8  * norm(mouse_pos, current_pos).x;
+				shootDir.y = -8 * norm(mouse_pos, current_pos).y;
 			}
 			else
 			if (mouse_pos.x < current_pos.x && mouse_pos.y > current_pos.y) {
-				shootDir.x = -5  * norm(mouse_pos, current_pos).x;
-				shootDir.y = 5  * norm(mouse_pos, current_pos).y;
+				shootDir.x = -8  * norm(mouse_pos, current_pos).x;
+				shootDir.y = 8  * norm(mouse_pos, current_pos).y;
 			}
 			else
 			if (mouse_pos.x > current_pos.x && mouse_pos.y > current_pos.y) {
-				shootDir.x = 5  * norm(mouse_pos, current_pos).x;
-				shootDir.y = 5  * norm(mouse_pos, current_pos).y;
+				shootDir.x = 8  * norm(mouse_pos, current_pos).x;
+				shootDir.y = 8  * norm(mouse_pos, current_pos).y;
 			}
 			
 
@@ -87,7 +108,7 @@ void Player::get_dir_vec_player(const Vector2f& mousepos) {
 
 
 	for (int i = 0; i < bullets_.size(); i++) {
-		bullets_[i].move(bullets_[i].velocity);
+		bullets_[i].move(bullets_[i].velocity.x /** movement.getElapsedTime().asSeconds() * 300*/, bullets_[i].velocity.y /** movement.getElapsedTime().asSeconds() * 300*/);
 	}
 
 	//deleting bullets our of window

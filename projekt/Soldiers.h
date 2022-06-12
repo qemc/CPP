@@ -30,6 +30,8 @@ protected:
 
 public:
 
+	static Clock movement;
+
 	int hp = 5;
 
 	Soldiers() = default;
