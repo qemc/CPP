@@ -13,6 +13,8 @@ public:
 	Game(const Texture &testure);
 	bool start = false;
 	void shoot(Player &player, Enemy &enemy);
+	bool win = false;
+	bool lost = false;
 
 };
 

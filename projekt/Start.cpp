@@ -15,6 +15,24 @@ Start::Start(const vector<Texture>& textures) {
 	maps[1].setPosition(10, 290);
 	maps[2].setPosition(10, 580);
 
+	font.loadFromFile("huston.otf");
+	title.setFont(font);
+
+	title.setPosition(300, 300);
+	title.setCharacterSize(40);
+	title.setString("steal the tank!");
+
+	inst.setFont(font);
+	inst.setPosition(300, 350);
+	inst.setCharacterSize(20);
+	inst.setString("choose map");
+
+	result.setFont(font);
+	result.setPosition(300, 380);
+	result.setCharacterSize(20);
+	
+
+
 }
 
 
@@ -78,55 +96,13 @@ void Start::update(const Vector2f& m_pos) {
 
 
 }
-//
-//string Start::select() {
-//
-//	cout << "dzialam" << endl;
-//
-//		if (maps[0].getGlobalBounds().contains(m_pos_)&& Mouse::isButtonPressed(Mouse::Left)) {
-//
-//			start = true;
-//
-//			cout << "map1.png" << endl;
-//
-//			return "map1.png";
-//		
-//
-//		}
-//		if (maps[1].getGlobalBounds().contains(m_pos_) && Mouse::isButtonPressed(Mouse::Left)) {
-//
-//			start = true;
-//
-//			cout << "map2.png" << endl;
-//
-//			return "map2.png";
-//
-//
-//		}
-//		if (maps[2].getGlobalBounds().contains(m_pos_) && Mouse::isButtonPressed(Mouse::Left)) {
-//
-//			start = true;
-//
-//			cout << "map3.png" << endl;
-//
-//			return "map3.png";
-//
-//
-//		}
-//
-//
-//
-//
-//
-//
-//}
-
 
 void Start::draw(RenderTarget& target, RenderStates state)const {
 
 	for (int i = 0; i < 3; i++) {
 		target.draw(maps[i]);
 	}
-
-
+	target.draw(this->title);
+	target.draw(this->inst);
+	target.draw(this->result);
 }

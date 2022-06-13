@@ -60,7 +60,9 @@ void Game::shoot(Player& player, Enemy& enemy) {
 
 
 	if (player.main.getGlobalBounds().intersects(this->getGlobalBounds())) {
+
 		cout << "WYGRALES" << endl;
+		win = true;
 
 	}
 

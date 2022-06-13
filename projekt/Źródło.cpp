@@ -11,6 +11,9 @@
 #include "Start.h"
 #include <string>
 
+#include <SFML/Audio.hpp>
+
+
 #include "map_reader.h"
 using namespace std;
 using namespace sf;
@@ -36,6 +39,14 @@ int main() {
 	Sprite background;
 	background.setTexture(background_t);
 
+
+	SoundBuffer ss;
+	ss.loadFromFile("imigrant.ogg");
+
+	Sound sound;
+	sound.setBuffer(ss);
+
+	sound.getLoop();
 
 
 
@@ -124,7 +135,10 @@ int main() {
 
 	//main loop
 	while (window.isOpen()) {
+		sound.play();
 
+		
+		
 
 		while (window.pollEvent(event)) {
 			if (event.type == Event::Closed) {
@@ -163,6 +177,7 @@ int main() {
 					start = true;
 					menu = false;
 					stats.game_clock.restart();
+					game.win = false;
 				}
 
 			}
@@ -296,6 +311,48 @@ int main() {
 			window.display();
 
 			Soldiers::movement.restart();
+
+			if (game.win == true) {
+
+				start = false;
+				soldiers.clear();
+				player.ammo = 50;
+				player.hp = 5;
+				menu = true;
+				
+				rectangles.clear();
+				bonus.clear();
+				player.velocity.x = 0;
+				player.velocity.x = 0;
+				player.main.setPosition(50, 650);
+
+				start_m.result.setString("you won");
+
+
+
+
+			}
+
+
+			if (player.hp == 0) {
+				game.lost == true;
+
+				start = false;
+				soldiers.clear();
+				player.ammo = 50;
+				player.hp = 5;
+				menu = true;
+
+				rectangles.clear();
+				bonus.clear();
+				player.velocity.x = 0;
+				player.velocity.x = 0;
+				player.main.setPosition(50, 650);
+
+				start_m.result.setString("you lost");
+
+
+			}
 
 
 		}

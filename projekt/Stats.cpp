@@ -8,7 +8,7 @@ Stats::Stats() {
 	setPosition(10, 750);
 	setCharacterSize(20);
 
-
+	
 
 }
 
