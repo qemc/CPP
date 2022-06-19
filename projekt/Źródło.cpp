@@ -9,102 +9,60 @@
 #include "Ammo.h"
 #include "Stats.h"
 #include "Start.h"
+#include "map_reader.h"
+#include "Art.h"
 #include <string>
-
+#include <map>
+#include <fstream>
+#include <iostream>
 #include <SFML/Audio.hpp>
 
-
-#include "map_reader.h"
 using namespace std;
 using namespace sf;
-
 Vector2f Player::m_pos;
 Clock Soldiers::movement;
 
 
 int main() {
 
-	Stats stats;
-
-	
+	//WINDOW ELEMENTS
 	ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	RenderWindow window(VideoMode(700, 800), "Steal the tank!", Style::Default, settings);
-	Event event;
 	window.setFramerateLimit(60);
-
-	Player player;
+	//TEXTURES
+	Texture umbrella;
+	umbrella.loadFromFile("umbrella.png");
 	Texture background_t;
 	background_t.loadFromFile("background.png");
-	Sprite background;
-	background.setTexture(background_t);
-
-
+	Texture tick_texture;
+	tick_texture.loadFromFile("tick.png");
+	Texture tank_texture;
+	tank_texture.loadFromFile("tank.png");
+	Texture ammo_texture;
+	ammo_texture.loadFromFile("ammo.png");
+	Texture fire_texture;
+	fire_texture.loadFromFile("fireplace.png");
+	//SOUNDS
 	SoundBuffer ss;
 	ss.loadFromFile("imigrant.ogg");
-
 	Sound sound;
 	sound.setBuffer(ss);
-
 	sound.getLoop();
-
-
-
-	vector<Texture>textures;
-
-	for (int i = 0; i < 3; i++) {
-
-		Texture texture;
-		texture.loadFromFile(to_string(i+1) + "map.png");
-		textures.emplace_back(texture);
-
-	}
-	Start start_m(textures);
-
-
-
-
-
+	//OBJECTS
+	Event event;
+	Stats stats;
+	Player player(umbrella);
 	Image image;
-	//image.loadFromFile("map1.png");
-
-	vector<string>maps = { "map1.png","map2.png","map3.png"};
-
-
+	//COLORS
 	Color red(237, 28, 36);
 	Color yellow(255, 242, 0);
 	Color grey(112, 146, 190);
 	Color blue(0, 162, 232);
-
-	Vector2f cords_set_pos;
-	Vector2f current_pos;
-	
-	// tank texture upload
-
-	Texture tank_texture;
-	tank_texture.loadFromFile("tank.png");
-
-	Game game(tank_texture);
-
-	Sprite sprite;
-	sprite.setTexture(tank_texture);
-	
-	//ammo texture upload
-	Texture ammo_texture;
-	ammo_texture.loadFromFile("ammo.png");
-	
-	//fireplace texture upload
-	Texture fire_texture;
-	fire_texture.loadFromFile("fireplace.png");
-
-	//fireplace animation variables
-	IntRect sourceSprite(0, 0, 64, 128);
-	int choose_sprite_x = 64;
-	int choose_sprite_y = 128;
-	//clocks
+	//CLOCKS
 	Clock fireplace_clock;
 	Clock shoot_clock;
-	//reading map variables
+	//MAP ELEMENTS
 	vector<Vector2f>cords_pos;
 	vector<CircleShape> corners;
 	vector<Walls>rectangles;
@@ -112,34 +70,64 @@ int main() {
 	vector<Enemy> soldiers;
 	vector<unique_ptr<Bonus>> bonus;
 	vector<Fireplace>fire;
-
-
-
-
-	
-
-
-
-	
-	//setting player circles
-	player.set_circles();
-
-
-
+	//MAP STATS & TEXTURES
+	vector<int> maps_num;
+	vector<Texture>textures;
+	vector<pair<int, int>>all_data;
+	int ile_map = 0;
+	//BACKGROUND
+	Sprite background;
+	background.setTexture(background_t);
+	//BOOL VARIABLES
 	bool start = false;
 	bool menu = true;
-	
+	for (int i = 0; i < 7; i++) {
+		Texture texture;
+		Image image;
+		pair<int, int>data;
+		if (!image.loadFromFile("map" + to_string(i+1) + ".png")) {
 
+		}
+		else {
+			maps_num.emplace_back(i);
+			ile_map++;
+		}
+		if (!texture.loadFromFile("png" + to_string(i+1) + ".png") && image.loadFromFile("map" + to_string(i+1) + ".png") == true) {
+			texture.loadFromFile("default.png");
+		}
+		textures.emplace_back(texture);
+		fstream plik;
+		plik.open("con" + to_string(i+1) + ".txt");
+		string dane;
+		int akt = 1;
+		while (getline(plik, dane)) {
 
-	
-
+			if (akt == 1) {
+				data.first = stoi(dane);
+			}
+			else if (akt == 2) {
+				data.second = stoi(dane);
+				break;
+			}
+			akt++;	
+		}
+		plik.close();
+		all_data.emplace_back(data);
+	}
+	Start start_m(textures,tick_texture);
+	Vector2f cords_set_pos;
+	Vector2f current_pos;
+	Game game(tank_texture);
+	//fireplace animation variables
+	IntRect sourceSprite(0, 0, 64, 128);
+	int choose_sprite_x = 64;
+	int choose_sprite_y = 128;
+	//reading map variables
+	Art art;
+	player.set_circles();
 	//main loop
 	while (window.isOpen()) {
-		sound.play();
-
-		
-		
-
+		//sound.play();
 		while (window.pollEvent(event)) {
 			if (event.type == Event::Closed) {
 				window.close();
@@ -147,29 +135,17 @@ int main() {
 			}
 		}
 		//starting loop
-
-
 		while (menu == true) {
-
 			while (window.pollEvent(event)) {
 				if (event.type == Event::Closed) {
 					window.close();
 					break;
 				}
 			}
-				
 			start_m.update(window.mapPixelToCoords(Mouse::getPosition(window)));
-
-		
-
-
-			for (int i = 0; i < 3; i++) {
-
-
+			for (int i = 0; i < ile_map; i++) {
 				if (Mouse::isButtonPressed(Mouse::Left)&&start_m.maps[i].getGlobalBounds().contains(window.mapPixelToCoords(Mouse::getPosition(window)))) {
-
-					image.loadFromFile("map"+to_string(i+1)+".png");
-
+					image.loadFromFile("map" + to_string(start_m.update(window.mapPixelToCoords(Mouse::getPosition(window)))) + ".png");
 					rectangles = read_walls(image);
 					soldiers = read_enemies(image);
 					bonus = read_bonus(image, fire_texture, ammo_texture);
@@ -178,22 +154,23 @@ int main() {
 					menu = false;
 					stats.game_clock.restart();
 					game.win = false;
+					player.hp = all_data[i].second;
+					player.ammo = all_data[i].first;
+					game.lost = false;
+					stats.mins = 0;
+					art.main.setPosition(set_destination(image).x+43, set_destination(image).y+43);
+					art.s_clock.restart();
+					player.if_umbrella = false;
+					art.hp = 10;
 				}
-
 			}
-
 			window.clear();
-		
 			window.draw(background);
 			window.draw(start_m);
-
-
 			window.display();
-
 		}
 		// game loop
 		while (start == true) {
-
 			while (window.pollEvent(event)) {
 				if (event.type == Event::Closed) {
 					window.close();
@@ -210,24 +187,16 @@ int main() {
 				s.move_();
 				window.draw(s);
 				game.shoot(player, s);
-
 			}
-
-
-
 			//deleting deal enemy
 			for (auto s = soldiers.begin(); s != soldiers.end();) {
-
-
 				if (s->hp <= 0) {
 					s = soldiers.erase(s);
 				}
 				else {
 					++s;
 				}
-
 			}
-
 			//player functions
 			player.update();
 			player.get_dir_vec_player(window.mapPixelToCoords(Mouse::getPosition(window)));
@@ -236,45 +205,38 @@ int main() {
 			window.draw(player);
 
 			//walls functions
-
 			for (auto& s : rectangles) {
-
 				if (player.main.getGlobalBounds().intersects(s.getGlobalBounds())) {
-
 					s.collision(player);
 				}
-				window.draw(s);
-				s.bullet_collision(player);
+				s.player_col(player);
+				window.draw(s);		
 			}
-
+			for (auto& e : soldiers) {
+				for (auto& s : rectangles) {
+					s.bullet_collision(player, e);
+				}
+			}
 			//bonus funcitons and drawing
 			for (auto& s : bonus) {
-
 				if (s->is_ammo == false) {
-
 					if (fireplace_clock.getElapsedTime().asSeconds() > 0.10) {
-
 						Fireplace& some_fireplace = dynamic_cast<Fireplace&>(*s.get());
-
 						sourceSprite.left = choose_sprite_x;
 						choose_sprite_x += 64;
 						choose_sprite_y += 64;
-
 						for (const auto& g : bonus) {
 							if (g->is_ammo == false) {
-
 								g->setTextureRect(sourceSprite);
 							}
 						}
 						if (choose_sprite_x == 512) {
 							choose_sprite_y += 64;
 							choose_sprite_x = 64;
-
 						}
 						if (choose_sprite_y == 512) {
 							choose_sprite_y = 64;
 							choose_sprite_x = 64;
-
 						}
 						some_fireplace.add_hp(player);
 						fireplace_clock.restart();
@@ -282,7 +244,6 @@ int main() {
 				}
 
 				if (s->is_ammo == false) {
-
 					Fireplace& some_fireplace = dynamic_cast<Fireplace&>(*s.get());
 					some_fireplace.add_hp(player);
 				}
@@ -292,7 +253,6 @@ int main() {
 				}
 				window.draw(*s);
 			}
-
 			//deleting 
 			for (auto itr = bonus.begin(); itr != bonus.end();) {
 				Bonus& some_bonus = dynamic_cast<Bonus&>(*itr->get());
@@ -306,12 +266,17 @@ int main() {
 			}
 			stats.update(player);
 			window.draw(stats);
-			window.draw(game);
-
+			if (start_m.mode_art == true) {
+				art.get_dir_vec_art(player.main.getPosition(), player);
+				window.draw(art);
+				game.win_boss(art);
+				player.def();
+			}
+			else {
+				window.draw(game);
+				game.win_game(player,start_m);
+			}
 			window.display();
-
-			Soldiers::movement.restart();
-
 			if (game.win == true) {
 
 				start = false;
@@ -319,48 +284,30 @@ int main() {
 				player.ammo = 50;
 				player.hp = 5;
 				menu = true;
-				
 				rectangles.clear();
 				bonus.clear();
 				player.velocity.x = 0;
 				player.velocity.x = 0;
 				player.main.setPosition(50, 650);
-
 				start_m.result.setString("you won");
 
-
-
-
 			}
+			if (player.hp <= 0) {
 
-
-			if (player.hp == 0) {
 				game.lost == true;
-
 				start = false;
 				soldiers.clear();
 				player.ammo = 50;
 				player.hp = 5;
 				menu = true;
-
 				rectangles.clear();
 				bonus.clear();
 				player.velocity.x = 0;
 				player.velocity.x = 0;
 				player.main.setPosition(50, 650);
-
 				start_m.result.setString("you lost");
-
-
 			}
-
-
 		}
 	}
-
-
-
-
-
 	return 0;
 }

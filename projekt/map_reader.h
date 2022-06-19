@@ -6,7 +6,7 @@
 #include "Ammo.h"
 #include "Game.h"
 
-
+//MAP READING FUNCTIONS
 
 vector<Walls>read_walls(const Image& image) {
 
@@ -116,38 +116,25 @@ vector<Walls>read_walls(const Image& image) {
 			}
 		}
 	}
-
-
-
 	return rectangles;
 }
-
 
 vector<Enemy> read_enemies(const Image& image) {
 	vector<Vector2f> ecord_pos;
 	vector<Enemy> soldiers;
 	Color red(255, 0, 0);
-
-
 	for (uint16_t j = 1; j < 700; j++) {
-
 		for (uint16_t i = 1; i < 700; i++) {
-
 			if (image.getPixel(i, j) == red && (image.getPixel(i, j - 1) != red || j - 1 == 0) && (image.getPixel(i - 1, j) != red || i - 1 == 0)) {
-
 				ecord_pos.emplace_back(Vector2f(i, j));
-
 				int i_ = i;
 				int j_ = j;
-
-
 				while (image.getPixel(i_, j) == red && image.getPixel(i_, j - 1) != red) {
 					i_++;
 				}
 				while (image.getPixel(i, j_) == red && image.getPixel(i - 1, j_) != red) {
 					j_++;
 				}
-
 				if (i_ - i > j_ - j) {
 					soldiers.emplace_back(Vector2f(i, i_), Vector2f(i_, j - (j - j_) / 2), false, Vector2f((i_ - i), (j_ - j)), Vector2f(i, j));
 				}
@@ -158,7 +145,6 @@ vector<Enemy> read_enemies(const Image& image) {
 		}
 	}
 	return soldiers;
-
 }
 
 
@@ -170,68 +156,41 @@ vector<unique_ptr<Bonus>> read_bonus(const Image& image, const Texture& fire_tex
 	Color yellow(255, 255, 0);
 	Color green(0, 255, 0);
 	IntRect sourceSprite(0, 0, 64, 128);
-
-
-	//Texture ammo_texture;
-	//ammo_texture.loadFromFile("ammo.png");
-
-	//Texture fire_texture;
-	//fire_texture.loadFromFile("fireplace.png");
-
 	for (uint16_t j = 1; j < 700; j++) {
-
 		for (uint16_t i = 1; i < 700; i++) {
-
 			if (image.getPixel(i, j) == yellow && (image.getPixel(i, j - 1) != yellow || j - 1 == 0) && (image.getPixel(i - 1, j) != yellow || i - 1 == 0)) {
-
 				ecord_pos.emplace_back(Vector2f(i, j));
-
 				int i_ = i;
 				int j_ = j;
-
-
 				while (image.getPixel(i_, j) == yellow && image.getPixel(i_, j - 1) != yellow) {
 					i_++;
 				}
 				while (image.getPixel(i, j_) == yellow && image.getPixel(i - 1, j_) != yellow) {
 					j_++;
 				}
-
 				bonus.emplace_back(make_unique<Fireplace>(Fireplace(fire_texture, Vector2f(i_ - 32, j_ - 50), sourceSprite)));
-
-
 			}
 		}
 	}
 	//bonus - ammo
 	for (uint16_t j = 1; j < 700; j++) {
-
 		for (uint16_t i = 1; i < 700; i++) {
-
 			if (image.getPixel(i, j) == green && (image.getPixel(i, j - 1) != green || j - 1 == 0) && (image.getPixel(i - 1, j) != green || i - 1 == 0)) {
-
 				ecord_pos.emplace_back(Vector2f(i, j));
-
 				int i_ = i;
 				int j_ = j;
-
-
 				while (image.getPixel(i_, j) == green && image.getPixel(i_, j - 1) != green) {
 					i_++;
 				}
 				while (image.getPixel(i, j_) == green && image.getPixel(i - 1, j_) != green) {
 					j_++;
 				}
-
 				bonus.emplace_back(make_unique<Ammo>(Ammo(ammo_texture, Vector2f(i_ - 30, j_ - 32))));
-
-
 			}
 		}
 	}
 
 	return bonus;
-
 }
 
 
@@ -248,25 +207,16 @@ Vector2f set_destination(const Image& image) {
 			if (image.getPixel(i, j) == blue && (image.getPixel(i, j - 1) != blue || j - 1 == 0) && (image.getPixel(i - 1, j) != blue || i - 1 == 0)) {
 
 				ecord_pos.emplace_back(Vector2f(i, j));
-
 				int i_ = i;
 				int j_ = j;
-
-
 				while (image.getPixel(i_, j) == blue && image.getPixel(i_, j - 1) != blue) {
 					i_++;
 				}
 				while (image.getPixel(i, j_) == blue && image.getPixel(i - 1, j_) != blue) {
 					j_++;
 				}
-
 				position.x = i_ - 64;
 				position.y = j_ - 64;
-
-
-
-
-
 			}
 		}
 	}
